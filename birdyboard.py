@@ -7,6 +7,10 @@ class BirdyBoard():
         self.chirps = []
         self.users = []
         self.current_user = None
+        self.replies = []
+
+    def set_current_user(self, user_id):
+        self.current_user = user_id
 
     def new_user(self, screen_name, full_name):
         user = {
@@ -15,7 +19,7 @@ class BirdyBoard():
             'user_id': uuid.uuid4()
         }
         self.users.append(user)
-        self.current_user = user
+        self.set_current_user(user)
 
     def create_chirp(self, message, is_private, chirped_at_user):
         chirp = {
@@ -28,4 +32,8 @@ class BirdyBoard():
         self.chirps.append(chirp)
 
     def reply_to_chirp(self, message, chirp_id):
-        pass
+        reply = {
+            'message': message,
+            'chirp_id': chirp_id
+        }
+        self.replies.append(reply)

@@ -25,10 +25,14 @@ class TestBirdyBoard(unittest.TestCase):
         self.assertEqual(self.birdyboard.chirps[0]['chirped_at_user'], 2)
 
     def test_reply_message_added_to_chirp(self):
-        self.birdyboard.reply_to_chirp("This is a reply.", 1)
+        self.birdyboard.reply_to_chirp("This is a reply.", '12345')
 
-        self.assertEqual(self.birdyboard.chirps[0].replies[0], "This is a reply.")
+        self.assertEqual(self.birdyboard.replies[0]['message'], "This is a reply.")
+        self.assertEqual(self.birdyboard.replies[0]['chirp_id'], '12345')
 
+    def test_set_user_sets_current_user(self):
+        self.birdyboard.set_current_user("this_is_a_test_id")
+        self.assertEqual(self.birdyboard.current_user, "this_is_a_test_id")
 
 if __name__ == '__main__':
     unittest.main()

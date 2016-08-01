@@ -19,7 +19,7 @@ class BirdyBoard():
             'user_id': uuid.uuid4()
         }
         self.users.append(user)
-        self.set_current_user(user)
+        self.set_current_user(user['user_id'])
 
     def create_chirp(self, message, is_private, chirped_at_user):
         chirp = {

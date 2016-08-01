@@ -48,11 +48,25 @@ class BirdyBoardMenu():
         main_menu_options[main_menu_input]()
 
     def show_new_user_inputs(self):
-        print("new user inputs")
+        print("Enter full name:")
+        full_name = input("> ")
+
+        print("Enter screen name:")
+        screen_name = input("> ")
+
+        # creates a new user and returns to the main menu
+        self.board.new_user(screen_name, full_name)
         self.show_main_menu()
 
     def show_user_select_menu(self):
-        print("user select menu")
+        print("Select a user profile:")
+        i = 1
+
+        # creates a menu using all users that currently exist
+        for user in self.board.users:
+            print("{}. {}".format(i, user['screen_name']))
+            i += 1
+
         self.show_main_menu()
 
     def show_chirps_menu(self):

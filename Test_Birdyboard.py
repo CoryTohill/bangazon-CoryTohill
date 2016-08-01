@@ -1,5 +1,6 @@
 import unittest
 from birdyboard import *
+import birdyboard_menu
 
 
 class TestBirdyBoard(unittest.TestCase):
@@ -9,6 +10,7 @@ class TestBirdyBoard(unittest.TestCase):
         self.birdyboard = BirdyBoard()
         self.birdyboard.new_user("Captain Screen Name", "Full Name")
         self.birdyboard.new_user("2nd Screen Name", "Full Second Name")
+        self.menu = birdyboard_menu.BirdyBoardMenu()
 
     def test_create_new_user(self):
         self.assertEqual(self.birdyboard.users[0]['screen_name'], "Captain Screen Name")
@@ -33,6 +35,9 @@ class TestBirdyBoard(unittest.TestCase):
     def test_set_user_sets_current_user(self):
         self.birdyboard.set_current_user("this_is_a_test_id")
         self.assertEqual(self.birdyboard.current_user, "this_is_a_test_id")
+
+    def test_BirdyBoard_instance_created_in_menu(self):
+        self.assertIsInstance(self.menu.board, BirdyBoard)
 
 if __name__ == '__main__':
     unittest.main()

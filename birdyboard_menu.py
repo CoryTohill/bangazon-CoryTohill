@@ -67,6 +67,21 @@ class BirdyBoardMenu():
             print("{}. {}".format(i, user['screen_name']))
             i += 1
 
+        selected_user = input("> ")
+
+        try:
+            # if the user inputs an integer,
+            selected_user_index = int(selected_user) - 1
+            # set the current user based on the user index
+            self.board.set_current_user(self.board.users[selected_user_index])
+
+        except ValueError:
+            for user in self.board.users:
+                # if the input is in one of the user screen names,
+                if selected_user in user['screen_name']:
+                    # set that user as the current user
+                    self.board.set_current_user(user)
+
         self.show_main_menu()
 
     def show_chirps_menu(self):

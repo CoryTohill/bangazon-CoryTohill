@@ -80,15 +80,17 @@ class BirdyBoardMenu():
         print("")
 
         try:
-            # if the user inputs an integer,
+            # if the user inputs an integer
             selected_user_index = int(user_input) - 1
-            # set the current user based on the user index
-            selected_user = self.board.users[selected_user_index]
+            # and if the integer is in the range of number of users to select
+            if selected_user_index < len(self.board.users):
+                # set the selected user based on the users list index
+                selected_user = self.board.users[selected_user_index]
 
         except ValueError:
             for user in self.board.users:
                 # if the input is in one of the user screen names,
-                if user_input in user['screen_name']:
+                if user_input.lower() in user['screen_name'].lower():
                     # set that user as the current user
                     selected_user = user
 
@@ -98,7 +100,7 @@ class BirdyBoardMenu():
 
         else:
             print("Invalid input, please try again")
-            # print("")
+            print("")
             self.show_user_select_menu()
 
         print("You are now logged in as {}".format(self.board.current_user['screen_name']))

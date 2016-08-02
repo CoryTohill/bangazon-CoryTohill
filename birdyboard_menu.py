@@ -88,11 +88,13 @@ class BirdyBoardMenu():
     def show_chirps_menu(self):
         private_chirps = []
         current_user_id = self.board.current_user['user_id']
+        i = 1
 
         print("<< Public Chirps >>")
         for chirp in self.board.chirps:
             if chirp['is_private'] is False:
-                print(chirp['message'])
+                print("{}. {}".format(i, chirp['message']))
+                i += 1
 
             else:
                 private_chirps.append(chirp)
@@ -103,7 +105,8 @@ class BirdyBoardMenu():
                 chirp['author'] == current_user_id or
                 chirp['chirped_at_user_id'] == current_user_id
             ):
-                print(chirp['message'])
+                print("{}. {}".format(i, chirp['message']))
+                i += 1
 
         self.show_main_menu()
 
@@ -119,31 +122,36 @@ class BirdyBoardMenu():
         ]
 
         print("This chirp will be:")
-        # loops through and displays options
+        # loops through and displays each option in create_a_chirp_menu_options
         for option in create_a_chirp_menu_options:
             print(option)
 
         user_input = input("> ")
 
+        # if the user's input is any part of one of the options,
+        # that options index value is saved as the selected_option
         for option in create_a_chirp_menu_options:
             if user_input.lower() in option.lower():
                 selected_option = create_a_chirp_menu_options.index(option)
 
+        # display error message and re-show menu if user's input was invalid
+        if selected_option is None:
+            print("Invalid input, please try again.")
+            print("")
+            self.show_create_a_chirp_menu()
+
+        # display the option selected by the user
         print("")
         print(
             "You chose to make a {} chirp"
             .format(create_a_chirp_menu_options[selected_option][3:])
         )
 
-        if selected_option is None:
-            print("Invalid input, please try again.")
-            print("")
-            self.show_create_a_chirp_menu()
-
         # if user selects pivate chirp, prompt for which user to chirp at
         if selected_option == 1:
             is_private = True
 
+            # user selects which user they want to chirp at
             print("Chirp at:")
             selected_user = self.select_user()
 

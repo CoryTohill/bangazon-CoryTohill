@@ -68,9 +68,85 @@ class BirdyBoardMenu():
 
     def show_user_select_menu(self):
         print("Select a user profile:")
-        i = 1
-        selected_user = None
 
+        selected_user = self.select_user()
+
+        if selected_user is not None:
+            self.board.set_current_user(selected_user)
+
+        else:
+            print("Invalid input, please try again")
+            print("")
+            self.show_user_select_menu()
+
+        print("You are now logged in as {}".format(self.board.current_user['screen_name']))
+        # print("")
+        self.show_main_menu()
+
+    def show_chirps_menu(self):
+        print("show chirps menu")
+        self.show_main_menu()
+
+    def show_create_a_chirp_menu(self):
+        selected_option = None
+        is_private = False
+        chirped_at_user_id = None
+        create_a_chirp_menu_options = [
+            "1. Public",
+            "2. Private"
+        ]
+
+        print("This chirp will be:")
+        # loops through and displays options
+        for option in create_a_chirp_menu_options:
+            print(option)
+
+        user_input = input("> ")
+
+        for option in create_a_chirp_menu_options:
+            if user_input.lower() in option.lower():
+                selected_option = create_a_chirp_menu_options.index(option)
+
+        print("")
+        print(
+            "You chose to make a {} chirp"
+            .format(create_a_chirp_menu_options[selected_option][3:])
+        )
+
+        if selected_option is None:
+            print("Invalid input, please try again.")
+            print("")
+            self.show_create_a_chirp_menu()
+
+        # if user selects pivate chirp, prompt for which user to chirp at
+        if selected_option == 1:
+            is_private = True
+
+            print("Chirp at:")
+            selected_user = self.select_user()
+
+            if selected_user is not None:
+                chirped_at_user_id = selected_user['user_id']
+
+            else:
+                print("Invalid input, please try again")
+                print("")
+                self.show_create_a_chirp_menu()
+
+        print("Enter chirp text:")
+        message = input("> ")
+
+        # creates the chirp based on user input
+        self.board.create_chirp(message, is_private, chirped_at_user_id)
+
+        print("")
+        print("Chirp created!")
+
+        self.show_main_menu()
+
+    def select_user(self):
+        selected_user = None
+        i = 1
         # creates a menu using all users that currently exist
         for user in self.board.users:
             print("{}. {}".format(i, user['screen_name']))
@@ -94,23 +170,4 @@ class BirdyBoardMenu():
                     # set that user as the current user
                     selected_user = user
 
-        # sets the selected user as the current_user if the user input was valid
-        if selected_user is not None:
-            self.board.set_current_user(selected_user)
-
-        else:
-            print("Invalid input, please try again")
-            print("")
-            self.show_user_select_menu()
-
-        print("You are now logged in as {}".format(self.board.current_user['screen_name']))
-        # print("")
-        self.show_main_menu()
-
-    def show_chirps_menu(self):
-        print("show chirps menu")
-        self.show_main_menu()
-
-    def show_create_a_chirp_menu(self):
-        print("show chirps inputs")
-        self.show_main_menu()
+        return selected_user

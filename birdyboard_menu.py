@@ -75,8 +75,7 @@ class BirdyBoardMenu():
             self.board.set_current_user(selected_user)
 
         else:
-            print("Invalid input, please try again")
-            print("")
+            self.input_error_message()
             self.show_user_select_menu()
 
         print("You are now logged in as {}".format(self.board.current_user['screen_name']))
@@ -136,8 +135,7 @@ class BirdyBoardMenu():
 
         # display error message and re-show menu if user's input was invalid
         if selected_option is None:
-            print("Invalid input, please try again.")
-            print("")
+            self.input_error_message()
             self.show_create_a_chirp_menu()
 
         # display the option selected by the user
@@ -159,8 +157,6 @@ class BirdyBoardMenu():
                 chirped_at_user_id = selected_user['user_id']
 
             else:
-                print("Invalid input, please try again")
-                print("")
                 self.show_create_a_chirp_menu()
 
         print("Enter chirp text:")
@@ -201,3 +197,7 @@ class BirdyBoardMenu():
                     selected_user = user
 
         return selected_user
+
+    def input_error_message(self):
+        print("Invalid input, please try again")
+        print("")

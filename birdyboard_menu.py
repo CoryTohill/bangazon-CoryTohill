@@ -7,7 +7,6 @@ class BirdyBoardMenu():
         self.board = birdyboard.BirdyBoard()
 
         print("Welcome to BirdyBoard!")
-        print("")
 
         self.show_main_menu()
 
@@ -20,6 +19,7 @@ class BirdyBoardMenu():
             '5. Private Chirp': self.show_private_chirp_user_menu
         }
 
+        print("")
         print("Please choose an option below,")
         print("or type 'exit' to leave the program:")
         print("")
@@ -41,6 +41,7 @@ class BirdyBoardMenu():
                 main_menu_input = key
 
         # displays the option the user selected
+        print("")
         print("You chose {}".format(main_menu_input[3:]))
         print("")
 
@@ -51,37 +52,58 @@ class BirdyBoardMenu():
         print("Enter full name:")
         full_name = input("> ")
 
+        print("")
+
         print("Enter screen name:")
         screen_name = input("> ")
 
-        # creates a new user and returns to the main menu
+        # creates a new user and then returns to the main menu
         self.board.new_user(screen_name, full_name)
+        print("")
+        print(
+            "Successfully created account for, and logged in as {}"
+            .format(self.board.current_user['screen_name'])
+        )
+
         self.show_main_menu()
 
     def show_user_select_menu(self):
         print("Select a user profile:")
         i = 1
+        selected_user = None
 
         # creates a menu using all users that currently exist
         for user in self.board.users:
             print("{}. {}".format(i, user['screen_name']))
             i += 1
 
-        selected_user = input("> ")
+        user_input = input("> ")
+        print("")
 
         try:
             # if the user inputs an integer,
-            selected_user_index = int(selected_user) - 1
+            selected_user_index = int(user_input) - 1
             # set the current user based on the user index
-            self.board.set_current_user(self.board.users[selected_user_index])
+            selected_user = self.board.users[selected_user_index]
 
         except ValueError:
             for user in self.board.users:
                 # if the input is in one of the user screen names,
-                if selected_user in user['screen_name']:
+                if user_input in user['screen_name']:
                     # set that user as the current user
-                    self.board.set_current_user(user)
+                    selected_user = user
 
+        # sets the selected user as the current_user if the user input was valid
+        if selected_user is not None:
+            self.board.set_current_user(selected_user)
+
+        else:
+            print("Invalid input, please try again")
+            # print("")
+            self.show_user_select_menu()
+
+        print("You are now logged in as {}".format(self.board.current_user['screen_name']))
+        # print("")
         self.show_main_menu()
 
     def show_chirps_menu(self):

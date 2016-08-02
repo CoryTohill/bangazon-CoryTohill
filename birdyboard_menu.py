@@ -12,40 +12,35 @@ class BirdyBoardMenu():
 
     def show_main_menu(self):
         main_menu_options = {
-            '1. New User Account': self.show_new_user_inputs,
-            '2. Select User': self.show_user_select_menu,
-            '3. View Chirps': self.show_chirps_menu,
-            '4. Make a Chirp': self.show_create_a_chirp_menu,
+            '1 New User Account': self.show_new_user_inputs,
+            '2 Select User': self.show_user_select_menu,
+            '3 View Chirps': self.show_chirps_menu,
+            '4 Make a Chirp': self.show_create_a_chirp_menu
         }
+        options_comp = [key for key in sorted(main_menu_options)]
+        # ordered list of main_menu_options without the numbers used for ordering them
+        formatted_options_comp = [option[2:] for option in options_comp]
 
         print("")
         print("Please choose an option below,")
-        print("or type 'exit' to leave the program:")
+        print("or type 'quit' at any time to leave the program:")
         print("")
 
-        # prints all keys in main_menu_options
-        for key in sorted(main_menu_options):
-            print(key)
+        user_selection = self.create_menu(formatted_options_comp)
 
-        main_menu_input = input("> ")
+        if user_selection is not None:
+            # displays the option the user selected
+            print("You chose {}".format(user_selection))
+            print("")
 
-        # exits the program if user enters exit
-        if main_menu_input.lower() == "exit":
-            quit()
+            index = formatted_options_comp.index(user_selection)
 
-        # if the user input is in one of the keys in the main_menu_dict
-        # the main_menu_input is redifined to be that key
-        for key in main_menu_options:
-            if main_menu_input in key:
-                main_menu_input = key
+            # calls the corresponding function in main_menu_options based on user's input
+            main_menu_options[options_comp[index]]()
 
-        # displays the option the user selected
-        print("")
-        print("You chose {}".format(main_menu_input[3:]))
-        print("")
-
-        # calls the appropriate function in main_menu_options based on user's input
-        main_menu_options[main_menu_input]()
+        else:
+            self.input_error_message()
+            self.show_main_menu()
 
     def show_new_user_inputs(self):
         print("Enter full name:")
@@ -189,6 +184,11 @@ class BirdyBoardMenu():
 
         user_input = input("> ")
         print("")
+
+        if user_input.lower() == "quit":
+            print("You chose quit")
+            print("")
+            quit()
 
         try:
             # if the user inputs an integer

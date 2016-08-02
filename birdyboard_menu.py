@@ -15,8 +15,7 @@ class BirdyBoardMenu():
             '1. New User Account': self.show_new_user_inputs,
             '2. Select User': self.show_user_select_menu,
             '3. View Chirps': self.show_chirps_menu,
-            '4. Public Chirp': self.show_chirp_inputs,
-            '5. Private Chirp': self.show_private_chirp_user_menu
+            '4. Make a Chirp': self.show_create_a_chirp_menu,
         }
 
         print("")
@@ -110,10 +109,6 @@ class BirdyBoardMenu():
         print("show chirps menu")
         self.show_main_menu()
 
-    def show_chirp_inputs(self):
+    def show_create_a_chirp_menu(self):
         print("show chirps inputs")
-        self.show_main_menu()
-
-    def show_private_chirp_user_menu(self):
-        print("show private chirp user menu")
         self.show_main_menu()

@@ -67,19 +67,28 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
     def show_user_select_menu(self):
+        # makes a list of available screen names
+        screen_name_comp = [user['screen_name'] for user in self.board.users]
+
         print("Select a user profile:")
+        # makes a menu using all screen names as options to choose from
+        selected_user_screen_name = self.create_menu(screen_name_comp)
 
-        selected_user = self.select_user()
-
-        if selected_user is not None:
-            self.board.set_current_user(selected_user)
+        if selected_user_screen_name is not None:
+            # gets index of selected user in screen_name_comp
+            index = screen_name_comp.index(selected_user_screen_name)
+            # uses the index to set the correct user to be the current user
+            self.board.set_current_user(self.board.users[index])
 
         else:
             self.input_error_message()
             self.show_user_select_menu()
 
-        print("You are now logged in as {}".format(self.board.current_user['screen_name']))
-        # print("")
+        print(
+            "You are now logged in as {}"
+            .format(self.board.current_user['screen_name'])
+        )
+
         self.show_main_menu()
 
 
@@ -151,7 +160,7 @@ class BirdyBoardMenu():
 
             # user selects which user they want to chirp at
             print("Chirp at:")
-            selected_user = self.select_user()
+            selected_user = self.create_menu()
 
             if selected_user is not None:
                 chirped_at_user_id = selected_user['user_id']
@@ -170,12 +179,12 @@ class BirdyBoardMenu():
 
         self.show_main_menu()
 
-    def select_user(self):
-        selected_user = None
+    def create_menu(self, options):
+        selected_option = None
         i = 1
         # creates a menu using all users that currently exist
-        for user in self.board.users:
-            print("{}. {}".format(i, user['screen_name']))
+        for option in options:
+            print("{}. {}".format(i, option))
             i += 1
 
         user_input = input("> ")
@@ -183,20 +192,20 @@ class BirdyBoardMenu():
 
         try:
             # if the user inputs an integer
-            selected_user_index = int(user_input) - 1
-            # and if the integer is in the range of number of users to select
-            if selected_user_index < len(self.board.users):
-                # set the selected user based on the users list index
-                selected_user = self.board.users[selected_user_index]
+            selected_index = int(user_input) - 1
+            # and if the integer is in the range of number of options to select from
+            if selected_index < len(options):
+                # set the selected option based on the options list's index
+                selected_option = options[selected_index]
 
         except ValueError:
-            for user in self.board.users:
-                # if the input is in one of the user screen names,
-                if user_input.lower() in user['screen_name'].lower():
-                    # set that user as the current user
-                    selected_user = user
+            for option in options:
+                # if the input is in one of the available options,
+                if user_input.lower() in option.lower():
+                    # set that option as the selected option
+                    selected_option = option
 
-        return selected_user
+        return selected_option
 
     def input_error_message(self):
         print("Invalid input, please try again")

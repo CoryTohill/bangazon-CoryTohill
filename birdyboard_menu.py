@@ -83,9 +83,31 @@ class BirdyBoardMenu():
         # print("")
         self.show_main_menu()
 
+
+
     def show_chirps_menu(self):
-        print("show chirps menu")
+        private_chirps = []
+        current_user_id = self.board.current_user['user_id']
+
+        print("<< Public Chirps >>")
+        for chirp in self.board.chirps:
+            if chirp['is_private'] is False:
+                print(chirp['message'])
+
+            else:
+                private_chirps.append(chirp)
+
+        print("<< Private Chirps >>")
+        for chirp in private_chirps:
+            if (
+                chirp['author'] == current_user_id or
+                chirp['chirped_at_user_id'] == current_user_id
+            ):
+                print(chirp['message'])
+
         self.show_main_menu()
+
+
 
     def show_create_a_chirp_menu(self):
         selected_option = None

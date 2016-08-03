@@ -152,6 +152,9 @@ class BirdyBoardMenu():
             # makes a menu using all screen names as options to choose from
             selected_screen_name = self.create_menu(screen_names)
 
+            # if user correctly selects a receiving user to chirp at,
+            # the receiving user's unique id is passed to the new chirp object,
+            # the private attribute is set to True
             if selected_screen_name is not None:
                 user_index = screen_names.index(selected_screen_name)
                 receiver = self.board.users[user_index]
@@ -162,6 +165,7 @@ class BirdyBoardMenu():
                 )
                 print("")
 
+            # error handling for selecting a user to chirp at
             else:
                 self.input_error_message()
                 self.show_create_a_chirp_menu()
@@ -178,6 +182,7 @@ class BirdyBoardMenu():
 
             self.board.create_chirp(message, self.board.current_user.user_id)
 
+        # error handling for selecting a type of chirp, ie. Public or Private
         else:
             self.input_error_message()
             self.show_create_a_chirp_menu()

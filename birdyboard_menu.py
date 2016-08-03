@@ -14,11 +14,12 @@ class BirdyBoardMenu():
         main_menu_options = {
             '1 New User Account': self.show_new_user_inputs,
             '2 Select User': self.show_user_select_menu,
-            '3 View Chirps': self.show_chirps_menu,
+            '3 View Chirps': self.show_public_chirps,
             '4 Make a Chirp': self.show_create_a_chirp_menu
         }
+        # sorted list of keys from main_menu_options
         options_comp = [key for key in sorted(main_menu_options)]
-        # ordered list of main_menu_options without the numbers used for ordering them
+        # sorted list of main_menu_options without the numbers used for sorting them
         formatted_options_comp = [option[2:] for option in options_comp]
 
         print("")
@@ -87,30 +88,34 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
 
-
-    def show_chirps_menu(self):
+    def show_public_chirps(self):
         private_chirps = []
         current_user_id = self.board.current_user['user_id']
         i = 1
+        # list of all public chirps
+        public_chirps = [chirp for chirp in self.board.chirps if chirp['is_private'] == False]
 
         print("<< Public Chirps >>")
-        for chirp in self.board.chirps:
-            if chirp['is_private'] is False:
-                print("{}. {}".format(i, chirp['message']))
-                i += 1
+        self.create_menu(public_chirps)
 
-            else:
-                private_chirps.append(chirp)
+
+    def show_private_chirps(self):
+        current_user_id = self.board.current_user['user_id']
+        private_chirps = []
+
+        for chirp in self.board.chirps:
+            # is the chirp private
+            if chirp['is_private']:
+                # is the chirp authored by or sent to the current user
+                if (
+                    chirp['author'] == current_user_id or
+                    chirp['chirped_at_user_id'] == current_user_id
+                ):
+                    # add chirp to private chirps list
+                    private_chirps.append(chirp)
 
         print("<< Private Chirps >>")
-        for chirp in private_chirps:
-            if (
-                chirp['author'] == current_user_id or
-                chirp['chirped_at_user_id'] == current_user_id
-            ):
-                print("{}. {}".format(i, chirp['message']))
-                i += 1
-
+        self.create_menu(chirp['message'] for chirp in private_chirps)
         self.show_main_menu()
 
 
@@ -153,12 +158,17 @@ class BirdyBoardMenu():
         if selected_option == 1:
             is_private = True
 
+            # makes a list of available screen names
+            screen_name_comp = [user['screen_name'] for user in self.board.users]
+
             # user selects which user they want to chirp at
             print("Chirp at:")
-            selected_user = self.create_menu()
+            selected_user_name = self.create_menu(screen_name_comp)
 
-            if selected_user is not None:
-                chirped_at_user_id = selected_user['user_id']
+            if selected_user_name is not None:
+                index = screen_name_comp.index(selected_user_name)
+
+                chirped_at_user_id = self.board.users[index]['user_id']
 
             else:
                 self.show_create_a_chirp_menu()

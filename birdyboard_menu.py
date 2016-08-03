@@ -14,7 +14,7 @@ class BirdyBoardMenu():
         main_menu_options = {
             '1 New User Account': self.show_new_user_inputs,
             '2 Select User': self.show_user_select_menu,
-            '3 View Chirps': self.show_public_chirps,
+            # '3 View Chirps': self.show_public_chirps,
             '4 Make a Chirp': self.show_create_a_chirp_menu
         }
         # sorted list of keys from main_menu_options
@@ -53,26 +53,26 @@ class BirdyBoardMenu():
         screen_name = input("> ")
 
         # creates a new user and then returns to the main menu
-        self.board.new_user(screen_name, full_name)
+        self.board.create_user(full_name, screen_name)
         print("")
         print(
             "Successfully created account for, and logged in as {}"
-            .format(self.board.current_user['screen_name'])
+            .format(self.board.current_user.screen_name)
         )
 
         self.show_main_menu()
 
     def show_user_select_menu(self):
         # makes a list of available screen names
-        screen_name_comp = [user['screen_name'] for user in self.board.users]
+        screen_names = [user.screen_name for user in self.board.users]
 
         print("Select a user profile:")
         # makes a menu using all screen names as options to choose from
-        selected_user_screen_name = self.create_menu(screen_name_comp)
+        selected_screen_name = self.create_menu(screen_names)
 
-        if selected_user_screen_name is not None:
+        if selected_screen_name is not None:
             # gets index of selected user in screen_name_comp
-            index = screen_name_comp.index(selected_user_screen_name)
+            index = screen_names.index(selected_screen_name)
             # uses the index to set the correct user to be the current user
             self.board.set_current_user(self.board.users[index])
 
@@ -82,102 +82,105 @@ class BirdyBoardMenu():
 
         print(
             "You are now logged in as {}"
-            .format(self.board.current_user['screen_name'])
+            .format(self.board.current_user.screen_name)
         )
 
         self.show_main_menu()
 
 
-    def show_public_chirps(self):
-        private_chirps = []
-        current_user_id = self.board.current_user['user_id']
-        i = 1
-        # list of all public chirps
-        public_chirps = [chirp for chirp in self.board.chirps if chirp['is_private'] == False]
+    # def show_public_chirps(self):
+#         private_chirps = []
+#         current_user_id = self.board.current_user['user_id']
+#         i = 1
+#         # list of all public chirps
+#         public_chirps = [chirp for chirp in self.board.chirps if chirp['is_private'] == False]
 
-        print("<< Public Chirps >>")
-        self.create_menu(public_chirps)
+#         print("<< Public Chirps >>")
+#         self.create_menu(public_chirps)
 
 
-    def show_private_chirps(self):
-        current_user_id = self.board.current_user['user_id']
-        private_chirps = []
+    # def show_private_chirps(self):
+#         current_user_id = self.board.current_user['user_id']
+#         private_chirps = []
 
-        for chirp in self.board.chirps:
-            # is the chirp private
-            if chirp['is_private']:
-                # is the chirp authored by or sent to the current user
-                if (
-                    chirp['author'] == current_user_id or
-                    chirp['chirped_at_user_id'] == current_user_id
-                ):
-                    # add chirp to private chirps list
-                    private_chirps.append(chirp)
+#         for chirp in self.board.chirps:
+#             # is the chirp private
+#             if chirp['is_private']:
+#                 # is the chirp authored by or sent to the current user
+#                 if (
+#                     chirp['author'] == current_user_id or
+#                     chirp['chirped_at_user_id'] == current_user_id
+#                 ):
+#                     # add chirp to private chirps list
+#                     private_chirps.append(chirp)
 
-        print("<< Private Chirps >>")
-        self.create_menu(chirp['message'] for chirp in private_chirps)
-        self.show_main_menu()
+#         print("<< Private Chirps >>")
+#         self.create_menu(chirp['message'] for chirp in private_chirps)
+#         self.show_main_menu()
 
 
 
     def show_create_a_chirp_menu(self):
         selected_option = None
-        is_private = False
         chirped_at_user_id = None
-        create_a_chirp_menu_options = [
-            "1. Public",
-            "2. Private"
+        type_of_chirp_options = [
+            "Public",
+            "Private"
         ]
 
+        # forces users to log in before making a chirp
+        if self.board.current_user is None:
+            print("Error: Must be logged in to create a chirp!")
+            self.show_main_menu()
+
         print("This chirp will be:")
-        # loops through and displays each option in create_a_chirp_menu_options
-        for option in create_a_chirp_menu_options:
-            print(option)
+        # creates menu with type_of_chirp_options as choices
+        selected_type = self.create_menu(type_of_chirp_options)
 
-        user_input = input("> ")
-
-        # if the user's input is any part of one of the options,
-        # that options index value is saved as the selected_option
-        for option in create_a_chirp_menu_options:
-            if user_input.lower() in option.lower():
-                selected_option = create_a_chirp_menu_options.index(option)
-
-        # display error message and re-show menu if user's input was invalid
-        if selected_option is None:
-            self.input_error_message()
-            self.show_create_a_chirp_menu()
-
-        # display the option selected by the user
         print("")
         print(
             "You chose to make a {} chirp"
-            .format(create_a_chirp_menu_options[selected_option][3:])
+            .format(selected_type)
         )
+        print("")
 
-        # if user selects pivate chirp, prompt for which user to chirp at
-        if selected_option == 1:
-            is_private = True
+        # asks user who they want to chirp at before creating the new chirp
+        if selected_type == "Private":
+            screen_names = [user.screen_name for user in self.board.users]
 
-            # makes a list of available screen names
-            screen_name_comp = [user['screen_name'] for user in self.board.users]
+            print("Select a user to chirp at:")
+            # makes a menu using all screen names as options to choose from
+            selected_screen_name = self.create_menu(screen_names)
 
-            # user selects which user they want to chirp at
-            print("Chirp at:")
-            selected_user_name = self.create_menu(screen_name_comp)
+            if selected_screen_name is not None:
+                user_index = screen_names.index(selected_screen_name)
+                receiver = self.board.users[user_index]
 
-            if selected_user_name is not None:
-                index = screen_name_comp.index(selected_user_name)
-
-                chirped_at_user_id = self.board.users[index]['user_id']
+                print(
+                    "You chose to chirp at {}"
+                    .format(receiver.screen_name)
+                )
+                print("")
 
             else:
+                self.input_error_message()
                 self.show_create_a_chirp_menu()
 
-        print("Enter chirp text:")
-        message = input("> ")
+            print("Enter chirp text:")
+            message = input("> ")
 
-        # creates the chirp based on user input
-        self.board.create_chirp(message, is_private, chirped_at_user_id)
+            self.board.create_chirp(message, self.board.current_user.user_id, True, receiver.user_id)
+
+        # creates a public chirp
+        elif selected_type == "Public":
+            print("Enter chirp text:")
+            message = input("> ")
+
+            self.board.create_chirp(message, self.board.current_user.user_id)
+
+        else:
+            self.input_error_message()
+            self.show_create_a_chirp_menu()
 
         print("")
         print("Chirp created!")

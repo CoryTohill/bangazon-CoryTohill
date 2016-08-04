@@ -14,8 +14,8 @@ class BirdyBoardMenu():
         main_menu_options = {
             '1 New User Account': self.create_new_user,
             '2 Select User': self.view_user_select_menu,
-            '3 View Public Chirps': self.view_public_chirps_menu,
-            # '4 View Private Chirps': self.view_private_chirps_menu,
+            '3 View Public Chirps': self.view_chirps_menu,
+            '4 View Private Chirps': self.view_private_chirps_menu,
             '5 Make a Chirp': self.create_a_chirp_menu
         }
         # sorted list of keys from main_menu_options
@@ -28,6 +28,7 @@ class BirdyBoardMenu():
         print("or type 'quit' at any time to leave the program:")
         print("")
 
+        # displays the main menu
         user_selection = self.create_menu(formatted_options_comp,
                                           self.show_main_menu)
 
@@ -83,14 +84,24 @@ class BirdyBoardMenu():
 
         self.show_main_menu()
 
-    def view_public_chirps_menu(self):
+    def view_chirps_menu(self, private=False):
         chirp_menu_options = []
+        initial_chirps_ids = []
 
-        # makes a list of all public chirps that are the beginnings of a new conversation
-        initial_public_chirps_ids = [chirp_id[0] for chirp_id in self.board.conversations.values()
-                                     if self.board.chirps[chirp_id[0]].private is False]
+        # will make a list of either all private or public that are the beginning of a conversation
+        for chirp_id_list in self.board.conversations.values():
+            if self.board.chirps[chirp_id_list[0]].private == private:
+                initial_chirps_ids.append(chirp_id_list[0])
 
-        for chirp_id in initial_public_chirps_ids:
+        # will filter out any private chrips that are not authored by or sent to the current user
+        if private is True:
+            initial_chirps_ids = [chirp_id for chirp_id in initial_chirps_ids
+                                  if self.board.chirps[chirp_id].author == self.board.current_user.user_id or
+                                  self.board.chirps[chirp_id].receiver == self.board.current_user.user_id]
+
+        # formats the data to so it will display with
+        # the author of each chirp's screen name before the chirp message
+        for chirp_id in initial_chirps_ids:
             current_chirp = self.board.chirps[chirp_id]
             current_chirp_author = self.board.users[current_chirp.author]
 
@@ -102,7 +113,7 @@ class BirdyBoardMenu():
         print("Select a chirp to view it's thread")
         print("or type 'cancel' to return to the main menu:")
         selected_chirp_menu_option = self.create_menu(chirp_menu_options,
-                                                      self.view_public_chirps_menu)
+                                                      self.view_chirps_menu)
 
         # splits the menu option on the first occurance of ": " and selects everything after it
         # which is the original chirp message
@@ -119,6 +130,9 @@ class BirdyBoardMenu():
 
         # displays the chirp thread
         self.show_chirp_thread(selected_conversation_id, self.board.chirps[selected_chirp_id])
+
+    def view_private_chirps_menu(self):
+        self.view_chirps_menu(private=True)
 
     def show_chirp_thread(self, conversation_id, original_chirp):
 

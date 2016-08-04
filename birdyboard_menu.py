@@ -28,7 +28,8 @@ class BirdyBoardMenu():
         print("or type 'quit' at any time to leave the program:")
         print("")
 
-        user_selection = self.create_menu(formatted_options_comp, self.show_main_menu)
+        user_selection = self.create_menu(formatted_options_comp,
+                                          self.show_main_menu)
 
         # displays the option the user selected
         print("You chose {}".format(user_selection))
@@ -64,12 +65,13 @@ class BirdyBoardMenu():
 
         print("Select a user profile:")
         # makes a menu using all screen names as options to choose from
-        selected_screen_name = self.create_menu(screen_names, self.view_user_select_menu)
+        selected_screen_name = self.create_menu(screen_names,
+                                                self.view_user_select_menu)
 
         # gets the key for the selected user by comparing
         # the selected screen name with all available screen names
         selected_user_key = next((key for key, value in self.board.users.items()
-                             if value.screen_name == selected_screen_name))
+                                  if value.screen_name == selected_screen_name))
 
         # sets the current user to the user selected
         self.board.set_current_user(self.board.users[selected_user_key])
@@ -81,42 +83,51 @@ class BirdyBoardMenu():
 
         self.show_main_menu()
 
-
     def view_public_chirps_menu(self):
         chirp_menu_options = []
 
         # makes a list of all public chirps that are the beginnings of a new conversation
         initial_public_chirps_ids = [chirp_id[0] for chirp_id in self.board.conversations.values()
-                                if self.board.chirps[chirp_id[0]].private is False]
+                                     if self.board.chirps[chirp_id[0]].private is False]
 
         for chirp_id in initial_public_chirps_ids:
             current_chirp = self.board.chirps[chirp_id]
             current_chirp_author = self.board.users[current_chirp.author]
 
-            chirp_menu_options.append("{}: {}".format(current_chirp_author.screen_name, current_chirp.message))
+            chirp_menu_options.append("{}: {}".format(
+                current_chirp_author.screen_name,
+                current_chirp.message)
+            )
 
         print("Select a chirp to view it's thread")
         print("or type 'cancel' to return to the main menu:")
-        selected_chirp_menu_option = self.create_menu(chirp_menu_options, self.view_public_chirps_menu)
-
+        selected_chirp_menu_option = self.create_menu(chirp_menu_options,
+                                                      self.view_public_chirps_menu)
 
         # splits the menu option on the first occurance of ": " and selects everything after it
         # which is the original chirp message
         selected_message = selected_chirp_menu_option.split(": ", 1)[1]
 
+        # gets the id of the chirp the message belongs to
         selected_chirp_id = next((chirp.chirp_id for chirp in self.board.chirps.values()
-                                if chirp.message == selected_message))
+                                  if chirp.message == selected_message))
 
-        selected_conversation_id = next((key for key, chirp_list in self.board.conversations.items()
+        # gets the id of the conversation the chirp belongs to
+        selected_conversation_id = next((key for key, chirp_list
+                                        in self.board.conversations.items()
                                         if chirp_list[0] == selected_chirp_id))
 
+        # displays the chirp thread
         self.show_chirp_thread(selected_conversation_id, self.board.chirps[selected_chirp_id])
-
 
     def show_chirp_thread(self, conversation_id, original_chirp):
 
-        chirps_to_show = [self.board.chirps[chirp_id] for chirp_id in self.board.conversations[conversation_id]]
+        # gets all chirps in the conversation that was passed in
+        chirps_to_show = [self.board.chirps[chirp_id]
+                          for chirp_id
+                          in self.board.conversations[conversation_id]]
 
+        # print chirp messages and users
         for chirp in chirps_to_show:
             print("{}: {}".format(self.board.users[chirp.author].screen_name,
                                   chirp.message))
@@ -128,9 +139,12 @@ class BirdyBoardMenu():
         user_input = input("> ")
         print("")
 
+        # Cancel option returns to the main menu
         if user_input.lower() in "2. cancel":
             self.show_main_menu()
 
+        # Reply option will prompt for a chirp message,
+        # then create a new chirp and add it to the conversation
         elif user_input.lower() in "1. reply":
             print("Enter chirp text:")
             message = input("> ")
@@ -145,13 +159,8 @@ class BirdyBoardMenu():
             print("Invalid input, please try again.")
             print("")
 
+        # re-shows the current menu
         self.show_chirp_thread(conversation_id, original_chirp)
-
-    def reply_to_chirp(self, message, user_id, private=False, receiver_id=None, conversation_id=None):
-        self.board.create_chirp(message, user_id, private, receiver_id, conversation_id)
-# **********************************************************************************************************
-# **********************************************************************************************************
-# **********************************************************************************************************
 
     def create_a_chirp_menu(self):
         type_of_chirp_options = [
@@ -166,7 +175,8 @@ class BirdyBoardMenu():
 
         print("This chirp will be:")
         # creates menu with type_of_chirp_options as choices
-        selected_type = self.create_menu(type_of_chirp_options, self.create_a_chirp_menu)
+        selected_type = self.create_menu(type_of_chirp_options,
+                                         self.create_a_chirp_menu)
 
         print("")
         print(
@@ -181,12 +191,12 @@ class BirdyBoardMenu():
 
             print("Select a user to chirp at:")
             # makes a menu using all screen names as options to choose from
-            selected_screen_name = self.create_menu(screen_names, self.create_a_chirp_menu)
+            selected_screen_name = self.create_menu(screen_names,
+                                                    self.create_a_chirp_menu)
 
             # loops through all users and gets the key associated with the users selection
             selected_user_key = next((key for key, value in self.board.users.items()
-                                if value.screen_name == selected_screen_name))
-
+                                      if value.screen_name == selected_screen_name))
 
             print(
                 "You chose to chirp at {}"
@@ -197,16 +207,18 @@ class BirdyBoardMenu():
             print("Enter chirp text:")
             message = input("> ")
 
-            self.board.create_chirp(message, self.board.current_user.user_id, True, selected_user_key)
+            self.board.create_chirp(message,
+                                    self.board.current_user.user_id,
+                                    True,
+                                    selected_user_key)
 
         # creates a public chirp
         else:
             print("Enter chirp text:")
             message = input("> ")
 
-            self.board.create_chirp(message, self.board.current_user.user_id)
-
-
+            self.board.create_chirp(message,
+                                    self.board.current_user.user_id)
 
         print("")
         print("Chirp created!")

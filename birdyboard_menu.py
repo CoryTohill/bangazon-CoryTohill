@@ -83,40 +83,40 @@ class BirdyBoardMenu():
 
 
     def view_public_chirps_menu(self):
-        # makes a list of all public messages
-        public_chirps = [chirp for chirp in self.board.chirps.values()
-                         if chirp.private is False
-                         ]
+        chirp_menu_options = []
+
+        # makes a list of all public chirps that are the beginnings of a new conversation
+        initial_public_chirps_ids = [chirp_id[0] for chirp_id in self.board.conversations.values()
+                                if self.board.chirps[chirp_id[0]].private is False]
+
+        for chirp_id in initial_public_chirps_ids:
+            current_chirp = self.board.chirps[chirp_id]
+            current_chirp_author = self.board.users[current_chirp.author]
+
+            chirp_menu_options.append("{}: {}".format(current_chirp_author.screen_name, current_chirp.message))
+
+        print("Select a chirp to view it's thread")
+        print("or type 'cancel' to return to the main menu:")
+        selected_chirp_menu_option = self.create_menu(chirp_menu_options, self.view_public_chirps_menu)
 
 
+        # splits the menu option on the first occurance of ": " and selects everything after it
+        # which is the original chirp message
+        selected_message = selected_chirp_menu_option.split(": ", 1)[1]
 
-        # # combines the public_chirps list and
-        # # chirp_author_screen_names list to be the correct format for displaying chirps
-        # for index in range(0, len(public_chirps)):
-        #     chirp_menu_options.append(
-        #         "{}: {}".format(
-        #             chirp_author_screen_names[index],
-        #             public_chirps[index].message
-        #         )
-        #     )
+        selected_chirp_id = next((chirp.chirp_id for chirp in self.board.chirps.values()
+                                if chirp.message == selected_message))
 
-        # selected_public_message = self.create_menu(chirp_menu_options, self.view_public_chirps_menu)
+        selected_conversation_id = next((key for key, chirp_list in self.board.conversations.items()
+                                        if chirp_list[0] == selected_chirp_id))
 
-        # message_index = chirp_menu_options.index(selected_public_message)
+        self.show_chirp_thread(selected_conversation_id)
 
-        # selected_chirp = public_chirps(message_index)
+    def show_chirp_thread(self, conversation_id):
+        pass
 
 
-
-        # # # matches the selected chirp message to the correct chirp in the list of all chirps
-        # # selected_chirp = next((chirp for chirp in self.board.chirps
-        # #                        if chirp.message == selected_public_message
-        # #                        ), None)
-
-
-        # self.show_main_menu()
-
-    def reply_to_chirp(self, message, user_id, conversation_id, private=False, receiver_id=None):
+    def reply_to_chirp(self, message, user_id, private=False, receiver_id=None, conversation_id=None):
         self.board.create_chirp(message, user_id, private, receiver_id, conversation_id)
 # **********************************************************************************************************
 # **********************************************************************************************************
@@ -197,6 +197,10 @@ class BirdyBoardMenu():
             print("You chose quit")
             print("")
             quit()
+
+        elif user_input.lower() == 'cancel':
+            print("You chose cancel")
+            self.show_main_menu()
 
         try:
             # if the user inputs an integer

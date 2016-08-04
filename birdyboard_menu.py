@@ -110,11 +110,42 @@ class BirdyBoardMenu():
         selected_conversation_id = next((key for key, chirp_list in self.board.conversations.items()
                                         if chirp_list[0] == selected_chirp_id))
 
-        self.show_chirp_thread(selected_conversation_id)
+        self.show_chirp_thread(selected_conversation_id, self.board.chirps[selected_chirp_id])
 
-    def show_chirp_thread(self, conversation_id):
-        pass
 
+    def show_chirp_thread(self, conversation_id, original_chirp):
+
+        chirps_to_show = [self.board.chirps[chirp_id] for chirp_id in self.board.conversations[conversation_id]]
+
+        for chirp in chirps_to_show:
+            print("{}: {}".format(self.board.users[chirp.author].screen_name,
+                                  chirp.message))
+
+        print("")
+        print("Select an option:")
+        print("1. Reply")
+        print("2. Cancel")
+        user_input = input("> ")
+        print("")
+
+        if user_input.lower() in "2. cancel":
+            self.show_main_menu()
+
+        elif user_input.lower() in "1. reply":
+            print("Enter chirp text:")
+            message = input("> ")
+            print("")
+
+            self.board.create_chirp(message,
+                                    self.board.current_user.user_id,
+                                    original_chirp.private,
+                                    conversation_id=conversation_id)
+
+        else:
+            print("Invalid input, please try again.")
+            print("")
+
+        self.show_chirp_thread(conversation_id, original_chirp)
 
     def reply_to_chirp(self, message, user_id, private=False, receiver_id=None, conversation_id=None):
         self.board.create_chirp(message, user_id, private, receiver_id, conversation_id)

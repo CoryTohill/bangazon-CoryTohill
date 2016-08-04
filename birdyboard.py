@@ -25,4 +25,4 @@ class BirdyBoard():
         if conversation_id is None:
             self.conversations[uuid.uuid4()] = [new_chirp.chirp_id]
         else:
-            conversations[conversation_id].append(new_chirp.chrip_id)
+            self.conversations[conversation_id].append(new_chirp.chirp_id)

@@ -9,5 +9,5 @@ class Chirp():
         self.author = user_id
         self.private = private
         self.receiver = receiver_id
-        self.chirp_id = uuid.uuid4()
+        self.chirp_id = str(uuid.uuid4())
         self.timestamp = datetime.datetime.now()

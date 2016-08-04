@@ -6,8 +6,8 @@ from chirp import *
 class BirdyBoard():
 
     def __init__(self):
-        self.chirps = []
-        self.users = []
+        self.chirps = {}
+        self.users = {}
         self.current_user = None
         self.conversations = {}
 
@@ -16,12 +16,12 @@ class BirdyBoard():
 
     def create_user(self, full_name, screen_name):
         user = User(full_name, screen_name)
-        self.users.append(user)
+        self.users[user.user_id] = user
         self.set_current_user(user)
 
     def create_chirp(self, message, user_id, private=False, receiver_id=None, conversation_id=None):
         new_chirp = Chirp(message, user_id, private, receiver_id)
-        self.chirps.append(new_chirp)
+        self.chirps[new_chirp.chirp_id] = new_chirp
         if conversation_id is None:
             self.conversations[uuid.uuid4()] = [new_chirp.chirp_id]
         else:

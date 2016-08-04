@@ -257,7 +257,7 @@ class BirdyBoardMenu():
             .format(selected_type)
         )
 
-        # asks user who they want to chirp at before creating the new chirp
+        # asks user who they want to chirp at before creating the new private chirp
         if selected_type == "Private":
             screen_names = [user.screen_name for user in self.board.users.values()]
 

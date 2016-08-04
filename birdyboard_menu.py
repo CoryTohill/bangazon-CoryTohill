@@ -11,6 +11,8 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
     def show_main_menu(self):
+        self.board.deserialize()
+
         main_menu_options = {
             '1 New User Account': self.create_new_user,
             '2 Select User': self.view_user_select_menu,
@@ -23,18 +25,15 @@ class BirdyBoardMenu():
         # sorted list of main_menu_options without the numbers used for sorting them
         formatted_options_comp = [option[2:] for option in options_comp]
 
-        print("")
-        print("Please choose an option below,")
-        print("or type 'quit' at any time to leave the program:")
-        print("")
+        print("\nPlease choose an option below,")
+        print("or type 'quit' at any time to leave the program:\n")
 
         # displays the main menu
         user_selection = self.create_menu(formatted_options_comp,
                                           self.show_main_menu)
 
         # displays the option the user selected
-        print("You chose {}".format(user_selection))
-        print("")
+        print("You chose {}\n".format(user_selection))
 
         index = formatted_options_comp.index(user_selection)
 
@@ -45,22 +44,21 @@ class BirdyBoardMenu():
         print("Enter full name:")
         full_name = input("> ")
 
-        print("")
-
-        print("Enter screen name:")
+        print("\nEnter screen name:")
         screen_name = input("> ")
 
         # creates a new user and then returns to the main menu
         self.board.create_user(full_name, screen_name)
-        print("")
         print(
-            "Successfully created account for, and logged in as {}"
+            "\nSuccessfully created account for, and logged in as {}"
             .format(self.board.current_user.screen_name)
         )
 
         self.show_main_menu()
 
     def view_user_select_menu(self):
+        self.board.deserialize()
+
         # makes a list of available screen names
         screen_names = [user.screen_name for user in self.board.users.values()]
 
@@ -85,6 +83,8 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
     def view_chirps_menu(self, private=False):
+        self.board.deserialize()
+
         chirp_menu_options = []
         initial_chirps_ids = []
 
@@ -112,8 +112,15 @@ class BirdyBoardMenu():
 
         print("Select a chirp to view it's thread")
         print("or type 'cancel' to return to the main menu:")
-        selected_chirp_menu_option = self.create_menu(chirp_menu_options,
-                                                      self.view_chirps_menu)
+
+        # calls for a different menu to be reloaded depending
+        # on whether the user is looking at public or private chirps
+        if private is True:
+            selected_chirp_menu_option = self.create_menu(chirp_menu_options,
+                                                          self.view_private_chirps_menu)
+        else:
+            selected_chirp_menu_option = self.create_menu(chirp_menu_options,
+                                                          self.view_chirps_menu)
 
         # splits the menu option on the first occurance of ": " and selects everything after it
         # which is the original chirp message
@@ -135,6 +142,7 @@ class BirdyBoardMenu():
         self.view_chirps_menu(private=True)
 
     def show_chirp_thread(self, conversation_id, original_chirp):
+        self.board.deserialize()
 
         # gets all chirps in the conversation that was passed in
         chirps_to_show = [self.board.chirps[chirp_id]
@@ -146,12 +154,10 @@ class BirdyBoardMenu():
             print("{}: {}".format(self.board.users[chirp.author].screen_name,
                                   chirp.message))
 
-        print("")
-        print("Select an option:")
+        print("\nSelect an option:")
         print("1. Reply")
         print("2. Cancel")
         user_input = input("> ")
-        print("")
 
         # Cancel option returns to the main menu
         if user_input.lower() in "2. cancel":
@@ -160,9 +166,8 @@ class BirdyBoardMenu():
         # Reply option will prompt for a chirp message,
         # then create a new chirp and add it to the conversation
         elif user_input.lower() in "1. reply":
-            print("Enter chirp text:")
+            print("\nEnter chirp text:")
             message = input("> ")
-            print("")
 
             self.board.create_chirp(message,
                                     self.board.current_user.user_id,
@@ -170,10 +175,9 @@ class BirdyBoardMenu():
                                     conversation_id=conversation_id)
 
         else:
-            print("Invalid input, please try again.")
-            print("")
+            print("Invalid input, please try again.\n")
 
-        # re-shows the current menu
+        # re-shows the current menu depending on public or private
         self.show_chirp_thread(conversation_id, original_chirp)
 
     def create_a_chirp_menu(self):
@@ -192,12 +196,10 @@ class BirdyBoardMenu():
         selected_type = self.create_menu(type_of_chirp_options,
                                          self.create_a_chirp_menu)
 
-        print("")
         print(
-            "You chose to make a {} chirp"
+            "\nYou chose to make a {} chirp\n"
             .format(selected_type)
         )
-        print("")
 
         # asks user who they want to chirp at before creating the new chirp
         if selected_type == "Private":
@@ -213,10 +215,9 @@ class BirdyBoardMenu():
                                       if value.screen_name == selected_screen_name))
 
             print(
-                "You chose to chirp at {}"
+                "You chose to chirp at {}\n"
                 .format(self.board.users[selected_user_key].screen_name)
             )
-            print("")
 
             print("Enter chirp text:")
             message = input("> ")
@@ -248,15 +249,13 @@ class BirdyBoardMenu():
             i += 1
 
         user_input = input("> ")
-        print("")
 
         if user_input.lower() == "quit":
-            print("You chose quit")
-            print("")
+            print("\nYou chose quit\n")
             quit()
 
         elif user_input.lower() == 'cancel':
-            print("You chose cancel")
+            print("\nYou chose cancel")
             self.show_main_menu()
 
         try:
@@ -275,11 +274,7 @@ class BirdyBoardMenu():
                     selected_option = option
 
         if selected_option is None:
-            self.input_error_message()
+            print("Invalid input, please try again\n")
             fail_method()
 
         return selected_option
-
-    def input_error_message(self):
-        print("Invalid input, please try again")
-        print("")

@@ -4,6 +4,14 @@ import birdyboard
 class BirdyBoardMenu():
 
     def __init__(self):
+        """ Creates a new instance of BirdyBoard on self.board,
+        Displays a welcome message,
+        calls the self.show_main_menu method
+
+        Method arguments:
+        -----------------
+        n/a
+        """
         self.board = birdyboard.BirdyBoard()
 
         print("Welcome to BirdyBoard!")
@@ -11,6 +19,12 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
     def show_main_menu(self):
+        """ Displays the main menu
+
+        Method arguments:
+        -----------------
+        n/a
+        """
         self.board.deserialize()
 
         main_menu_options = {
@@ -41,6 +55,13 @@ class BirdyBoardMenu():
         main_menu_options[options_comp[index]]()
 
     def create_new_user(self):
+        """ Takes user input and creates a new user,
+        and returns to the main menu
+
+        Method arguments:
+        -----------------
+        n/a
+        """
         print("Enter full name:")
         full_name = input("> ")
 
@@ -57,6 +78,13 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
     def view_user_select_menu(self):
+        """ Displays the menu for a user to select a user
+        then returns to the main menu
+
+        Method arguments:
+        -----------------
+        n/a
+        """
         self.board.deserialize()
 
         # makes a list of available screen names
@@ -83,6 +111,13 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
     def view_chirps_menu(self, private=False):
+        """ Displays either all public chirps or private chirps that are either from or sent the current_user,
+        allows users to select a chirp to view that chirp thread
+
+        Method arguments:
+        -----------------
+        private(boolean) -- True if the chirps viewed are private and False if public, defaults to False
+        """
         self.board.deserialize()
 
         chirp_menu_options = []
@@ -139,9 +174,22 @@ class BirdyBoardMenu():
         self.show_chirp_thread(selected_conversation_id, self.board.chirps[selected_chirp_id])
 
     def view_private_chirps_menu(self):
+        """ Calls the view_chirps_menu method and passes in private=True
+
+        Method arguments:
+        -----------------
+        n/a
+        """
         self.view_chirps_menu(private=True)
 
     def show_chirp_thread(self, conversation_id, original_chirp):
+        """ Displays all chirps in a conversation and allows a user to add a chirp to it
+
+        Method arguments:
+        -----------------
+        conversation_id(str) -- The UUID key of the conversaion to be displayed
+        original_chirp(obj) -- The initial chirp object that created the conversation
+        """
         self.board.deserialize()
 
         # gets all chirps in the conversation that was passed in
@@ -181,6 +229,14 @@ class BirdyBoardMenu():
         self.show_chirp_thread(conversation_id, original_chirp)
 
     def create_a_chirp_menu(self):
+        """ Shows a menu for users to create either a public or private chirp.
+        Collects input data from a user for creating a chirp,
+        and then calls the create_chirp method with the data.
+
+        Method arguments:
+        -----------------
+        n/a
+        """
         type_of_chirp_options = [
             "Public",
             "Private"
@@ -241,6 +297,15 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
     def create_menu(self, options, fail_method):
+        """ Creates a numbers menu of options,
+        and either returns a user's selection
+        or executes a method if the user's input is invalid
+
+        Method arguments:
+        -----------------
+        options(list) -- The list of options that will make up the menu choices
+        fail_method(method reference) -- The method to be executed if a user makes an invalid input
+        """
         selected_option = None
         i = 1
         # creates a menu using all users that currently exist

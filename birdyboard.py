@@ -7,6 +7,15 @@ from chirp import *
 class BirdyBoard():
 
     def __init__(self):
+        """ Runs the self.deserialize() method,
+        sets the current_user to None
+        creates a self.conversations attribute and sets it to an empty dictionary
+
+        Method arguments:
+        -----------------
+        n/a
+        """
+
         self.deserialize()
         self.current_user = None
         self.conversations = {}

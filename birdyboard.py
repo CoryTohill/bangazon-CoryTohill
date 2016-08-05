@@ -58,7 +58,8 @@ class BirdyBoard():
         user_id(str) -- The user UUID that will be set as the chirp's author
         private(boolean) -- Sets the private attrite to True/False, defaults to False
         receiver_id(str) -- The UUID of the user that a private chirp is sent to, defaults to None
-        conversation_id(str) -- The conversation UUID to determine what conversation the chirp belongs to, defaults to None
+        conversation_id(str) -- The conversation UUID to determine
+                                what conversation the chirp belongs to, defaults to None
         """
         new_chirp = Chirp(message, user_id, private, receiver_id)
         self.chirps[new_chirp.chirp_id] = new_chirp
@@ -89,8 +90,10 @@ class BirdyBoard():
 
     def deserialize(self):
         """ Deserializes chirps.txt, users.txt, and conversations.txt,
-        and sets the self.chirps, self.users.txt and self.conversations attributes to the data respectively.
-        If an error occurs desirializing any of the files, the attribute value will be set to an empty dictionary
+        and sets the self.chirps, self.users.txt and self.conversations
+        attributes to the data respectively.
+        If an error occurs desirializing any of the files,
+        the attribute value will be set to an empty dictionary
 
         Method arguments:
         -----------------

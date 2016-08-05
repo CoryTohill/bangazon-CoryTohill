@@ -1,4 +1,5 @@
 import birdyboard
+import menu_maker
 
 
 class BirdyBoardMenu():
@@ -43,8 +44,9 @@ class BirdyBoardMenu():
         print("or type 'quit' at any time to leave the program:\n")
 
         # displays the main menu
-        user_selection = self.create_menu(formatted_options_comp,
-                                          self.show_main_menu)
+        user_selection = menu_maker.create_menu(formatted_options_comp,
+                                                self.show_main_menu,
+                                                self.show_main_menu)
 
         # displays the option the user selected
         print("You chose {}\n".format(user_selection))
@@ -92,8 +94,9 @@ class BirdyBoardMenu():
 
         print("Select a user profile:")
         # makes a menu using all screen names as options to choose from
-        selected_screen_name = self.create_menu(screen_names,
-                                                self.view_user_select_menu)
+        selected_screen_name = menu_maker.create_menu(screen_names,
+                                                      self.view_user_select_menu,
+                                                      self.show_main_menu)
 
         # gets the key for the selected user by comparing
         # the selected screen name with all available screen names
@@ -111,12 +114,14 @@ class BirdyBoardMenu():
         self.show_main_menu()
 
     def view_chirps_menu(self, private=False):
-        """ Displays either all public chirps or private chirps that are either from or sent the current_user,
+        """ Displays either all public chirps or private chirps
+        that are either from or sent the current_user,
         allows users to select a chirp to view that chirp thread
 
         Method arguments:
         -----------------
-        private(boolean) -- True if the chirps viewed are private and False if public, defaults to False
+        private(boolean) -- True if the chirps viewed are private
+                            and False if public, defaults to False
         """
         self.board.deserialize()
 
@@ -130,9 +135,11 @@ class BirdyBoardMenu():
 
         # will filter out any private chrips that are not authored by or sent to the current user
         if private is True:
-            initial_chirps_ids = [chirp_id for chirp_id in initial_chirps_ids
-                                  if self.board.chirps[chirp_id].author == self.board.current_user.user_id or
-                                  self.board.chirps[chirp_id].receiver == self.board.current_user.user_id]
+            initial_chirps_ids = [
+                chirp_id for chirp_id in initial_chirps_ids
+                if self.board.chirps[chirp_id].author == self.board.current_user.user_id or
+                self.board.chirps[chirp_id].receiver == self.board.current_user.user_id
+            ]
 
         # formats the data to so it will display with
         # the author of each chirp's screen name before the chirp message
@@ -151,11 +158,13 @@ class BirdyBoardMenu():
         # calls for a different menu to be reloaded depending
         # on whether the user is looking at public or private chirps
         if private is True:
-            selected_chirp_menu_option = self.create_menu(chirp_menu_options,
-                                                          self.view_private_chirps_menu)
+            selected_chirp_menu_option = menu_maker.create_menu(chirp_menu_options,
+                                                                self.view_private_chirps_menu,
+                                                                self.show_main_menu)
         else:
-            selected_chirp_menu_option = self.create_menu(chirp_menu_options,
-                                                          self.view_chirps_menu)
+            selected_chirp_menu_option = menu_maker.create_menu(chirp_menu_options,
+                                                                self.view_chirps_menu,
+                                                                self.show_main_menu)
 
         # splits the menu option on the first occurance of ": " and selects everything after it
         # which is the original chirp message
@@ -249,8 +258,9 @@ class BirdyBoardMenu():
 
         print("This chirp will be:")
         # creates menu with type_of_chirp_options as choices
-        selected_type = self.create_menu(type_of_chirp_options,
-                                         self.create_a_chirp_menu)
+        selected_type = menu_maker.create_menu(type_of_chirp_options,
+                                               self.create_a_chirp_menu,
+                                               self.show_main_menu)
 
         print(
             "\nYou chose to make a {} chirp\n"
@@ -263,8 +273,9 @@ class BirdyBoardMenu():
 
             print("Select a user to chirp at:")
             # makes a menu using all screen names as options to choose from
-            selected_screen_name = self.create_menu(screen_names,
-                                                    self.create_a_chirp_menu)
+            selected_screen_name = menu_maker.create_menu(screen_names,
+                                                          self.create_a_chirp_menu,
+                                                          self.show_main_menu)
 
             # loops through all users and gets the key associated with the users selection
             selected_user_key = next((key for key, value in self.board.users.items()
@@ -295,51 +306,3 @@ class BirdyBoardMenu():
         print("Chirp created!")
 
         self.show_main_menu()
-
-    def create_menu(self, options, fail_method):
-        """ Creates a numbers menu of options,
-        and either returns a user's selection
-        or executes a method if the user's input is invalid
-
-        Method arguments:
-        -----------------
-        options(list) -- The list of options that will make up the menu choices
-        fail_method(method reference) -- The method to be executed if a user makes an invalid input
-        """
-        selected_option = None
-        i = 1
-        # creates a menu using all users that currently exist
-        for option in options:
-            print("{}. {}".format(i, option))
-            i += 1
-
-        user_input = input("> ")
-
-        if user_input.lower() == "quit":
-            print("\nYou chose quit\n")
-            quit()
-
-        elif user_input.lower() == 'cancel':
-            print("\nYou chose cancel")
-            self.show_main_menu()
-
-        try:
-            # if the user inputs an integer
-            selected_index = int(user_input) - 1
-            # and if the integer is in the range of number of options to select from
-            if selected_index < len(options):
-                # set the selected option based on the options list's index
-                selected_option = options[selected_index]
-
-        except ValueError:
-            for option in options:
-                # if the input is in one of the available options,
-                if user_input.lower() in option.lower():
-                    # set that option as the selected option
-                    selected_option = option
-
-        if selected_option is None:
-            print("Invalid input, please try again\n")
-            fail_method()
-
-        return selected_option
